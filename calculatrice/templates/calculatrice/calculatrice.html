@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculatrice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+            background-color: #f2f2f2;
+        }
+        .conteneur {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 340px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .resultat {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .erreur {
+            color: red;
+        }
+        label {
+            font-size: 14px;
+            color: #333;
+        }
+        .menu-operations {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .menu-operations h3 {
+            margin-top: 0;
+            font-size: 15px;
+            text-align: center;
+        }
+        .menu-operations ol {
+            margin: 0;
+            padding-left: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="conteneur">
+        <h2>Calculatrice</h2>
+
+        <!-- Liste numérotée des opérations affichée à l'utilisateur -->
+        <div class="menu-operations">
+            <h3>===== CALCULATRICE =====</h3>
+            <ol>
+                <li>Addition</li>
+                <li>Soustraction</li>
+                <li>Multiplication</li>
+                <li>Modulo</li>
+                <li>Pourcentage</li>
+                <li>Carré</li>
+                <li>Cube</li>
+                <li>Racine carrée</li>
+                <li>Factorielle</li>
+                <li>Sinus</li>
+                <li>Cosinus</li>
+            </ol>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="operation">Choisissez une opération (1-11) :</label>
+            <select name="operation" id="operation" onchange="mettreAJourChamps()">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+            </select>
+
+            <label id="label_nbre1">Nombre</label>
+            <input type="number" step="any" name="nbre1" id="nbre1" required>
+
+            <div id="bloc_nbre2">
+                <label id="label_nbre2">Deuxième nombre</label>
+                <input type="number" step="any" name="nbre2" id="nbre2">
+            </div>
+
+            <button type="submit">Calculer</button>
+        </form>
+
+        {% if resultat is not None %}
+            <p class="resultat">{{ operation_texte }} = {{ resultat }}</p>
+        {% endif %}
+
+        {% if erreur %}
+            <p class="erreur">{{ erreur }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const operationsUnSeulNombre = ['6', '7', '8', '9', '10', '11'];
+
+        function mettreAJourChamps() {
+            const operation = document.getElementById('operation').value;
+            const blocNbre2 = document.getElementById('bloc_nbre2');
+            const labelNbre1 = document.getElementById('label_nbre1');
+            const labelNbre2 = document.getElementById('label_nbre2');
+
+            if (operationsUnSeulNombre.includes(operation)) {
+                blocNbre2.style.display = 'none';
+                document.getElementById('nbre2').removeAttribute('required');
+            } else {
+                blocNbre2.style.display = 'block';
+                document.getElementById('nbre2').setAttribute('required', 'required');
+            }
+
+            if (operation === '5') {
+                labelNbre1.textContent = "Nombre de base";
+                labelNbre2.textContent = "Pourcentage (%)";
+            } else {
+                labelNbre1.textContent = "Nombre";
+                labelNbre2.textContent = "Deuxième nombre";
+            }
+        }
+
+        mettreAJourChamps();
+    </script>
+</body>
+</html>
